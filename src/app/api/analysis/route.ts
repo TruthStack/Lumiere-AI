@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 
-const PERFECT_CORP_API_KEY = process.env.NEXT_PUBLIC_PERFECT_CORP_API_KEY
+const PERFECT_CORP_API_KEY = process.env.PERFECT_CORP_API_KEY
 const PERFECT_CORP_ENDPOINT = 'https://yce-api-01.perfectcorp.com/api/v1.0/skin/analyze'
 
 export async function POST(req: Request) {

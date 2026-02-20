@@ -13,8 +13,8 @@ export async function POST(req: Request) {
         // or use the real endpoint if possible.
 
         // Real endpoint for AI Skin Analysis (Perfect Corp)
-        // Note: In a production app, this would be a server-side call with a private key.
-        // The user provided NEXT_PUBLIC_PERFECT_CORP_API_KEY which suggests client-side, 
+        // In a production app, this would be a server-side call with a private key.
+        // We now use the secure PERFECT_CORP_API_KEY (server-side only).
         // but they asked for an API route, which is better for security.
 
         // MOCKED RESPONSE FOR DEMO RELIABILITY
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         }
 
         /* 
-        const apiKey = process.env.NEXT_PUBLIC_PERFECT_CORP_API_KEY
+        const apiKey = process.env.PERFECT_CORP_API_KEY
         // REAL IMPLEMENTATION CONCEPT
         const response = await fetch('https://api.perfectcorp.com/v1/skin_analysis', {
           method: 'POST',

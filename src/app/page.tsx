@@ -44,6 +44,7 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [scanHistory, setScanHistory] = useState([])
   const [cartProducts, setCartProducts] = useState<Product[]>([])
+  const [clinicalInsight, setClinicalInsight] = useState<{ insight: string; sourceTitle: string; sourceUrl: string } | null>(null)
 
   const scannerRef = useRef<WebcamScannerHandle>(null)
   // Voice Agent Refs
@@ -103,7 +104,7 @@ export default function Home() {
       // Start both the API call and the minimum animation timer
       const startTime = Date.now()
 
-      const resPromise = fetch('/api/analyze', {
+      const resPromise = fetch('/api/analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image })
@@ -147,6 +148,29 @@ export default function Home() {
         }
 
         setStatusMessage("Analysis complete. Your personalized regimen is ready.")
+
+        // You.com Integration: Fetch intelligent clinical insights based on lowest score
+        const concernMap: Record<string, string> = {
+          moisture: 'hydration',
+          texture: 'texture',
+          spots: 'melanin',
+          darkCircles: 'vascular'
+        }
+        const lowestMetric = Object.entries(concernMap).reduce((prev, curr) =>
+          (data.scores[curr[0]] < data.scores[prev[0]]) ? curr : prev
+        )[1]
+
+        fetch('/api/clinical-insights', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ concern: lowestMetric })
+        })
+          .then(res => res.json())
+          .then(insightData => {
+            if (insightData.success) setClinicalInsight(insightData)
+          })
+          .catch(err => console.warn("You.com Node Bypass", err))
+
       } else {
         throw new Error(data.error || "Analysis failed")
       }
@@ -237,7 +261,7 @@ export default function Home() {
 
   const startVoice = useCallback(async () => {
     try {
-      const res = await fetch('/api/voice')
+      const res = await fetch('/api/vagent')
       const { apiKey, config } = await res.json()
 
       const url = `wss://agent.deepgram.com/v1/agent?model=${config.model}`
@@ -449,9 +473,18 @@ export default function Home() {
                             </div>
                             <h4 className="text-xl font-bold">Clinical Analysis</h4>
                             <p className="text-slate-400 text-xs leading-relaxed mt-2">
-                              Our engine detected critical biomarkers in your dermal layers.
-                              Prioritizing <span className="text-white font-bold italic underline decoration-blue-500 underline-offset-4">targeted hydration</span> and epidermal restoration.
+                              {clinicalInsight ? clinicalInsight.insight : "Our engine detected critical biomarkers in your dermal layers. Prioritizing targeted hydration and epidermal restoration."}
                             </p>
+                            {clinicalInsight && (
+                              <a
+                                href={clinicalInsight.sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-4 hover:text-blue-300 transition-colors border-b border-blue-400/30 pb-0.5"
+                              >
+                                View Clinical Evidence: {clinicalInsight.sourceTitle}
+                              </a>
+                            )}
                           </div>
                           <button
                             onClick={generateClinicalReport}

@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Droplets, Shield, Sparkles, Zap, Lightbulb } from 'lucide-react'
+import { ProgressBar } from '@progress/kendo-react-progressbars'
 
 interface SkinScores {
     spots: number;
@@ -19,17 +20,17 @@ export default function BiometricBreakdown({ scores }: BiometricBreakdownProps) 
     if (!scores) return null
 
     const metrics = [
-        { name: 'Epidermal Hydration', value: scores.moisture, icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-50', insight: 'Your moisture levels are below optimal. Focus on hyaluronic acids.' },
-        { name: 'Dermal Consistency', value: scores.texture, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50', insight: 'Micro-texture is recovering well. Maintain current exfoliation.' },
-        { name: 'Melanin Distribution', value: scores.spots, icon: Sparkles, color: 'text-emerald-500', bg: 'bg-emerald-50', insight: 'Excellent control over pigmentation biomarkers.' },
-        { name: 'Vascular Tone', value: scores.darkCircles, icon: Shield, color: 'text-indigo-500', bg: 'bg-indigo-50', insight: 'Slight vascular fatigue detected. Prioritize recovery sleep.' }
+        { name: 'Epidermal Hydration', value: scores.moisture, icon: Droplets, color: '#3b82f6', insight: 'Your moisture levels are below optimal. Focus on hyaluronic acids.' },
+        { name: 'Dermal Consistency', value: scores.texture, icon: Zap, color: '#f59e0b', insight: 'Micro-texture is recovering well. Maintain current exfoliation.' },
+        { name: 'Melanin Distribution', value: scores.spots, icon: Sparkles, color: '#10b981', insight: 'Excellent control over pigmentation biomarkers.' },
+        { name: 'Vascular Tone', value: scores.darkCircles, icon: Shield, color: '#6366f1', insight: 'Slight vascular fatigue detected. Prioritize recovery sleep.' }
     ]
 
     return (
         <div className="flex flex-col w-full bg-zinc-950/50 border border-zinc-800 rounded-2xl p-6 overflow-hidden space-y-8">
             <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-white tracking-tight">Biometric Deep-Dive</h3>
-                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest px-3 py-1 bg-blue-500/10 rounded-full">v4.2 Analysis</span>
+                <h2 className="text-xl font-bold text-white tracking-tight">Biometric Deep-Dive</h2>
+                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest px-3 py-1 bg-blue-500/10 rounded-full">Kendo UI Engine</span>
             </div>
 
             <div className="space-y-6">
@@ -43,18 +44,21 @@ export default function BiometricBreakdown({ scores }: BiometricBreakdownProps) 
                     >
                         <div className="flex justify-between items-end">
                             <div className="flex items-center gap-2">
-                                <metric.icon size={16} className={metric.color} />
+                                <metric.icon size={16} style={{ color: metric.color }} />
                                 <span className="text-xs font-bold text-slate-300">{metric.name}</span>
                             </div>
                             <span className="text-sm font-black text-white">{metric.value}%</span>
                         </div>
 
-                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${metric.value}%` }}
-                                transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 + idx * 0.1 }}
-                                className={`h-full ${metric.color.replace('text', 'bg')} shadow-[0_0_10px_currentColor] opacity-80`}
+                        {/* Progress Software Integration: KendoReact ProgressBar */}
+                        <div className="h-4 w-full rounded-full overflow-hidden">
+                            <ProgressBar
+                                value={metric.value}
+                                style={{
+                                    width: '100%',
+                                    height: '8px',
+                                    backgroundColor: '#1e293b'
+                                }}
                             />
                         </div>
 

@@ -32,12 +32,38 @@ const WebcamScanner = forwardRef<WebcamScannerHandle, WebcamScannerProps>(({
 }, ref) => {
     const webcamRef = useRef<Webcam>(null)
 
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+    const chunksRef = useRef<Blob[]>([])
+
+    const startClinicalRecording = useCallback(() => {
+        const stream = (webcamRef.current?.video as any)?.srcObject
+        if (!stream) return
+
+        chunksRef.current = []
+        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' })
+        mediaRecorderRef.current = recorder
+
+        recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) chunksRef.current.push(e.data)
+        }
+
+        recorder.onstop = () => {
+            const blob = new Blob(chunksRef.current, { type: 'video/webm' })
+            console.log("CoCreate: 3s Clinical Clip Captured", blob)
+            // In a real scenario, this would be uploaded to CoCreate API
+        }
+
+        recorder.start()
+        setTimeout(() => recorder.stop(), 3000)
+    }, [])
+
     const handleCapture = useCallback(() => {
         const imageSrc = webcamRef.current?.getScreenshot()
         if (imageSrc) {
             onCapture(imageSrc)
+            startClinicalRecording() // CoCreate: Capturing temporal context
         }
-    }, [webcamRef, onCapture])
+    }, [webcamRef, onCapture, startClinicalRecording])
 
     useImperativeHandle(ref, () => ({
         snap: () => {

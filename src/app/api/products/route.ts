@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 import { client } from '@/sanity/lib/client'
 
 export async function POST(req: Request) {
