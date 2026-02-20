@@ -15,7 +15,7 @@ import BiometricBreakdown from '@/components/BiometricBreakdown'
 import DiagnosticTerminal from '@/components/DiagnosticTerminal'
 import ClinicalReportPDF from '@/components/ClinicalReportPDF'
 import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import { jsPDF } from 'jspdf'
 
 interface SkinScores {
   spots: number;
@@ -135,7 +135,7 @@ export default function Home() {
               moisture: data.scores.moisture,
               wrinkles: data.scores.wrinkles || data.scores.darkCircles,
             },
-            recommendedProducts: products?.map((p: any) => ({
+            recommendedProducts: products?.map((p: Product) => ({
               _type: 'reference',
               _ref: p._id,
               _key: p._id || p.name // Fallback for mock IDs
@@ -150,12 +150,13 @@ export default function Home() {
       } else {
         throw new Error(data.error || "Analysis failed")
       }
-    } catch (error: any) {
-      console.error("Capture Error:", error)
-      setStatusMessage(`Error: ${error.message || "Analysis encountered an issue."}`)
-    } finally {
-      setIsAnalyzing(false)
+    } catch (error: unknown) {
+      const err = error as { message?: string }
+      console.error("Capture Error:", err)
+      setStatusMessage(`Error: ${err.message || "Analysis encountered an issue."}`)
+      setIsAnalyzing(false) // Reset on error so user isn't stuck
     }
+    // Note: setIsAnalyzing(false) is now handled by DiagnosticTerminal.onComplete
   }
 
   const generateClinicalReport = async () => {
@@ -178,10 +179,10 @@ export default function Home() {
       const element = document.getElementById('pdf-report-template');
       if (!element) throw new Error("PDF Template not found");
 
-      const canvas = await (html2canvas as any)(element, { scale: 2, useCORS: true });
+      const canvas = await (html2canvas as (el: HTMLElement, opts: object) => Promise<HTMLCanvasElement>)(element, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = (pdf as any).getImageProperties(imgData);
+      const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
@@ -303,18 +304,12 @@ export default function Home() {
       console.error(err)
       setStatusMessage("Voice integration failed.")
     }
-  }, [])
+  }, [recommendedProducts, stopVoice])
 
   useEffect(() => {
     const handleVoiceToggle = () => {
       if (isVoiceActive) stopVoice()
       else startVoice()
-    }
-    // Listen for the custom event from the Voice agent logic
-    const handleScanEvent = () => {
-      // This will be handled by the WebcamScanner if we pass the capture down
-      // But wait, handleCapture is here. We can just call it if we have the image.
-      // Actually, trigger_camera_scan should probably just "snap" from the child.
     }
     window.addEventListener('lumiere-voice-toggle', handleVoiceToggle)
     return () => window.removeEventListener('lumiere-voice-toggle', handleVoiceToggle)
@@ -372,7 +367,7 @@ export default function Home() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                 >
-                  <DiagnosticTerminal />
+                  <DiagnosticTerminal onComplete={() => setIsAnalyzing(false)} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -427,7 +422,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-10"
                 >
-                  {isAnalyzing && !analysisResult ? (
+                  {isAnalyzing ? (
                     <div className="bg-white/50 backdrop-blur-xl p-12 rounded-[2.5rem] border border-blue-100 shadow-xl text-center space-y-6 animate-pulse">
                       <div className="w-16 h-16 bg-blue-600/10 text-blue-600 rounded-full flex items-center justify-center mx-auto">
                         <Sparkles size={32} className="animate-spin" />
@@ -503,7 +498,7 @@ export default function Home() {
                             ].map((product, idx) => (
                               <div key={product._id} className="min-w-[280px] opacity-70">
                                 <ProductCard
-                                  product={product as any}
+                                  product={product as Product}
                                   onAddToCart={addToCart}
                                   isInCart={cart.includes(product._id)}
                                   index={idx}

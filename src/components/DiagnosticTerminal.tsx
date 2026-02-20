@@ -4,13 +4,20 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const LOG_LINES = [
-    "> INITIALIZING DIAGNOSTICS...",
-    "> SCANNING EPIDERMAL LAYERS...",
-    "> FETCHING SANITY REGIMEN...",
-    "> ANALYSIS COMPLETE."
+    "> INITIATING SECURE BIOMETRIC CAPTURE...",
+    "> HANDSHAKE ESTABLISHED WITH PERFECT CORP VISION ENGINE.",
+    "> DECODING EPIDERMAL TOPOLOGY & PORE DENSITY...",
+    "> QUANTIFYING MELANIN DISTRIBUTION AND VASCULAR TONE...",
+    "> WARNING: CRITICAL HYDRATION DEFICIENCY DETECTED.",
+    "> QUERYING SANITY STRUCTURED DATABASE FOR MATCHING THERAPEUTICS...",
+    "> REGIMEN SYNTHESIZED. RENDERING CLINICAL DASHBOARD."
 ]
 
-export default function DiagnosticTerminal() {
+interface DiagnosticTerminalProps {
+    onComplete?: () => void;
+}
+
+export default function DiagnosticTerminal({ onComplete }: DiagnosticTerminalProps) {
     const [visibleLines, setVisibleLines] = useState<string[]>([])
 
     useEffect(() => {
@@ -21,11 +28,15 @@ export default function DiagnosticTerminal() {
                 index++
             } else {
                 clearInterval(interval)
+                // Wait 800ms after final string then signal completion
+                setTimeout(() => {
+                    onComplete?.()
+                }, 800)
             }
-        }, 400)
+        }, 600)
 
         return () => clearInterval(interval)
-    }, [])
+    }, [onComplete])
 
     return (
         <div className="w-full aspect-[4/3] bg-zinc-950 rounded-[2rem] border border-blue-500/30 p-8 font-mono relative overflow-hidden shadow-[0_0_50px_rgba(37,99,235,0.2)]">
@@ -39,22 +50,22 @@ export default function DiagnosticTerminal() {
                             key={i}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-cyan-400 text-sm md:text-base tracking-tighter glow-text"
+                            className="text-cyan-400 text-sm md:text-base tracking-tighter glow-text flex items-center gap-1"
                             style={{ textShadow: '0 0 8px rgba(34,211,238,0.5)' }}
                         >
-                            {line}
+                            <span>{line}</span>
+                            {i === visibleLines.length - 1 && visibleLines.length < LOG_LINES.length && (
+                                <motion.span
+                                    animate={{ opacity: [1, 0] }}
+                                    transition={{ duration: 0.8, repeat: Infinity }}
+                                    className="text-cyan-400 inline-block font-bold"
+                                >
+                                    _
+                                </motion.span>
+                            )}
                         </motion.div>
                     ))}
                 </AnimatePresence>
-
-                {/* Blinking Cursor */}
-                {visibleLines.length < LOG_LINES.length && (
-                    <motion.div
-                        animate={{ opacity: [1, 0] }}
-                        transition={{ duration: 0.8, repeat: Infinity }}
-                        className="w-2 h-5 bg-cyan-400 inline-block align-middle ml-1"
-                    />
-                )}
             </div>
 
             {/* Background Medical Mesh Decoration */}

@@ -198,4 +198,5 @@ const WebcamScanner = forwardRef<WebcamScannerHandle, WebcamScannerProps>(({
     )
 })
 
+WebcamScanner.displayName = 'WebcamScanner'
 export default WebcamScanner
