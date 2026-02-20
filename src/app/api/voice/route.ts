@@ -1,34 +1,19 @@
 import { NextResponse } from 'next/server'
+import { getDeepgramKey, DEEPGRAM_VOICE_AGENT_CONFIG } from '@/lib/deepgram'
 
 export async function GET() {
-    // This route provides the configuration for the Deepgram Voice Agent
-    // including the dynamic tool definitions.
+    try {
+        const apiKey = getDeepgramKey()
 
-    const config = {
-        model: 'aura-asteria-en', // Use a premium sounding voice
-        instructions: `You are Lumière, a high-end AI skincare consultant. 
-    Your tone is clinical, professional, but luxurious and welcoming. 
-    When the user asks you to look at their skin, analyze their pores, or check for issues, 
-    you MUST call the 'trigger_skin_analysis' tool. 
-    Wait for the analysis results before giving specific advice.`,
-        tools: [
-            {
-                name: 'trigger_skin_analysis',
-                description: 'Initiates a high-resolution skin scan using the device camera to analyze pores, hydration, and skin health.',
-                parameters: {
-                    type: 'object',
-                    properties: {}, // No parameters needed for the trigger itself
-                    required: [],
-                },
-                // In Deepgram, client_side tools allow the frontend to catch the event
-                client_side: true
-            },
-        ],
+        // In a real production app, we would use Deepgram's Project Scoped Keys API
+        // to generate a short-lived token. For the hackathon, we return the key
+        // with the configuration to simplify the frontend setup.
+
+        return NextResponse.json({
+            apiKey,
+            config: DEEPGRAM_VOICE_AGENT_CONFIG,
+        })
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to get voice configuration' }, { status: 500 })
     }
-
-    return NextResponse.json(config)
 }
-
-// In some cases, we might want to handle the session initialization here
-// or proxy the Deepgram request. For a hackathon, returning the config
-// for the client-side SDK is often the cleanest path.

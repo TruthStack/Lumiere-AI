@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✧ Lumière AI ✧
 
-## Getting Started
+[![Repository](https://img.shields.io/badge/Repository-TruthStack/Lumiere--AI-000000?style=for-the-badge&logo=github)](https://github.com/TruthStack/Lumiere-AI)
+[![Version](https://img.shields.io/badge/Version-0.1.0-blue?style=for-the-badge)](https://github.com/TruthStack/Lumiere-AI)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Deepgram](https://img.shields.io/badge/Voice_AI-Deepgram-ff69b4?style=for-the-badge&logo=deepgram)](https://deepgram.com/)
+[![Sanity](https://img.shields.io/badge/CMS-Sanity-f03e2f?style=for-the-badge&logo=sanity)](https://www.sanity.io/)
 
-First, run the development server:
+> **Autonomous Dermal Intelligence: A Clinical Convergence of Voice, Vision, and Content.**
 
+Lumière AI is a sophisticated skincare diagnostic platform engineered for the DeveloperWeek 2026 Hackathon. It integrates high-fidelity voice interactivity with precision biometric computer vision to deliver a "Clinical Luxury" consultation experience.
+
+---
+
+## ✦ Core Architecture
+
+Lumière AI operates at the intersection of three fundamental technological pillars:
+
+### 1. Acoustic Intelligence (Deepgram)
+Utilizing the **Deepgram Voice Agent**, Lumière provides a hands-free, sub-second latency interface. The system processes natural language queries to pilot the diagnostic workflow through advanced function calling.
+
+### 2. Optical Biomarkers (Perfect Corp)
+The diagnostic engine leverages the **Perfect Corp AI Skin Analysis API**. This integration enables real-time extraction of high-dimensional dermal data points, including hydration levels, pore density, wrinkle depth, and texture indices.
+
+### 3. Structured Content Management (Sanity)
+All clinical regimens and product taxonomies are modeled within **Sanity.io**. This provides a scalable, queryable backbone that maps real-time biometric outputs to personalized skincare solutions.
+
+---
+
+## 🛠️ Technical Specification
+
+| Component | Standard | Implementation |
+| :--- | :--- | :--- |
+| **Framework** | Next.js 14 | App Router / React Server Components |
+| **Voice Interface** | Deepgram SDK | Real-time WebSocket streaming |
+| **CV Engine** | Perfect Corp | Dermal point-cloud analysis |
+| **Data Layer** | Sanity CMS | Structured GROQ-powered content |
+| **Design System** | Tailwind CSS | Clinical Luxury Glassmorphism |
+| **Animation** | Framer Motion | Fluid state transitions |
+| **Reporting** | jsPDF / html2canvas | Professional PDF generation |
+
+---
+
+## 🚀 Deployment & Configuration
+
+### Prerequisites
+- Node.js 20.x
+- Sanity Project ID
+- API access for Deepgram and Perfect Corp
+
+### Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the clinical repository
+git clone https://github.com/TruthStack/Lumiere-AI.git
+
+# Enter the project context
+cd Lumiere-AI
+
+# Synchronize dependencies
+npm install --legacy-peer-deps
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Synchronization
+Configure `.env.local` with the following variables:
+```env
+NEXT_PUBLIC_PERFECT_CORP_APP_ID=...
+NEXT_PUBLIC_PERFECT_CORP_API_KEY=...
+NEXT_PUBLIC_SANITY_PROJECT_ID=3nbw8r1c
+SANITY_API_TOKEN=...
+DEEPGRAM_API_KEY=...
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏛️ Project Topography
 
-## Learn More
+```text
+/src
+  /app
+    /api           # Biometric & Voice Endpoints
+    page.tsx       # Primary Clinical Interface
+  /components
+    ClinicUI       # High-Fidelity Interface Components
+    WebcamScanner  # Vision Logic
+    CyberTerminal  # Real-time Parsing Visualization
+  /sanity          # Content Schema & GROQ Client
+  /lib             # Synchronous SDK Wrappers
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ⚖️ License & Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project is released under the **MIT License**. Developed as a showcase of sponsor synergy for DeveloperWeek 2026.
 
-## Deploy on Vercel
+*Deterministic precision. Aesthetic excellence. Lumière AI.*
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
