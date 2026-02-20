@@ -38,4 +38,4 @@ next-env.d.ts
 .vercel
 vercel_build_log.txt
 vercel_build_log_2.txt
-INFOGRAPHICS/
+# Removed INFOGRAPHICS/ from ignore
