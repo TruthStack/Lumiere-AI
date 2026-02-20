@@ -2,6 +2,9 @@
   "name": "lumiere-ai",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -18,7 +21,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-webcam": "^7.2.0",
-    "sanity": "^5.11.0",
+    "sanity": "^3.99.0",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {

@@ -90,17 +90,92 @@ export default function ClinicUI() {
         }
     }, [webcamRef])
 
-    // Simulate Deepgram Tool Trigger for Demo
-    useEffect(() => {
-        if (isVoiceActive) {
-            const timer = setTimeout(() => {
-                // In real use, this would be triggered by a WebSocket message from Deepgram
-                // for "client_side" tool calls.
-                // triggerSkinAnalysis();
-            }, 5000);
-            return () => clearTimeout(timer);
+    // Deepgram Voice Agent Integration
+    const [isListening, setIsListening] = useState(false)
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+    const socketRef = useRef<WebSocket | null>(null)
+
+    const startVoiceAgent = useCallback(async () => {
+        try {
+            const response = await fetch('/api/voice')
+            const config = await response.json()
+
+            // For a hackathon, we'll use the Deepgram WebSocket directly from the browser
+            // Note: In production, use a secure token proxy
+            const apiKey = '9b0942fbc155b7ef5acf5e1ddbf265aa31591849' // From .env.local
+            const url = `wss://agent.deepgram.com/v1/agent?model=${config.model}`
+
+            const socket = new WebSocket(url, ['token', apiKey])
+            socketRef.current = socket
+
+            socket.onopen = () => {
+                console.log('Deepgram Connection Open')
+                // Send initial config/instructions
+                socket.send(JSON.stringify({
+                    type: 'SettingsConfiguration',
+                    instructions: config.instructions,
+                    tools: config.tools
+                }))
+                setIsListening(true)
+            }
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data)
+
+                if (data.type === 'FunctionCallRequest' && data.name === 'trigger_skin_analysis') {
+                    triggerSkinAnalysis()
+                    // Acknowledge the tool call
+                    socket.send(JSON.stringify({
+                        type: 'FunctionCallResponse',
+                        name: 'trigger_skin_analysis',
+                        call_id: data.call_id,
+                        output: 'Skin analysis triggered. Capturing scan now.'
+                    }))
+                }
+            }
+
+            socket.onerror = (err) => console.error('Deepgram Socket Error:', err)
+            socket.onclose = () => setIsListening(false)
+
+            // Start capturing audio
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+            mediaRecorderRef.current = mediaRecorder
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+                    socket.send(event.data)
+                }
+            }
+
+            mediaRecorder.start(100)
+            setStatusMessage("Lumière is listening...")
+        } catch (error) {
+            console.error('Failed to start voice agent:', error)
+            setStatusMessage("Failed to initialize voice agent.")
         }
-    }, [isVoiceActive, triggerSkinAnalysis])
+    }, [triggerSkinAnalysis])
+
+    const stopVoiceAgent = useCallback(() => {
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop()
+            mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop())
+        }
+        if (socketRef.current) {
+            socketRef.current.close()
+        }
+        setIsListening(false)
+        setStatusMessage("Lumière on standby.")
+    }, [])
+
+    useEffect(() => {
+        if (isVoiceActive && !isListening) {
+            startVoiceAgent()
+        } else if (!isVoiceActive && isListening) {
+            stopVoiceAgent()
+        }
+    }, [isVoiceActive, isListening, startVoiceAgent, stopVoiceAgent])
+
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto px-6 py-12">
@@ -222,9 +297,13 @@ export default function ClinicUI() {
                                     { label: "Texture", value: analysisResult?.texture || 0, icon: <Activity size={20} /> }
                                 ].map((item, idx) => (
                                     <motion.div
-                                        initial={{ scale: 0.9, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ delay: idx * 0.1 }}
+                                        initial={{ scale: 0.9, opacity: 0, y: 10 }}
+                                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                                        transition={{
+                                            delay: idx * 0.15,
+                                            type: "spring",
+                                            stiffness: 80
+                                        }}
                                         key={item.label}
                                         className="glass-card p-6 rounded-3xl glow-border group hover:bg-white transition-colors"
                                     >
@@ -255,9 +334,13 @@ export default function ClinicUI() {
                                     {recommendedProducts.map((product, idx) => (
                                         <motion.div
                                             key={product._id || idx}
-                                            initial={{ x: 20, opacity: 0 }}
+                                            initial={{ x: 30, opacity: 0 }}
                                             animate={{ x: 0, opacity: 1 }}
-                                            transition={{ delay: 0.4 + (idx * 0.1) }}
+                                            transition={{
+                                                delay: 0.6 + (idx * 0.15),
+                                                type: "spring",
+                                                damping: 20
+                                            }}
                                             className="glass-card p-4 rounded-2xl flex items-center gap-4 glow-border hover:shadow-lg transition-all"
                                         >
                                             <div className="w-16 h-16 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0 relative">
