@@ -13,6 +13,14 @@
 
 > **Autonomous Dermal Intelligence: A Clinical Convergence of Voice, Vision, and Content.**
 
+---
+
+## 🎥 Video Demo
+
+[![Lumiere AI Demo](https://img.youtube.com/vi/zgvOH0zhfvw/0.jpg)](https://www.youtube.com/watch?v=zgvOH0zhfvw)
+
+---
+
 Lumière AI is a high-fidelity skincare diagnostic platform engineered for the DeveloperWeek 2026 Hackathon. It integrates real-time biometric computer vision with sub-second latency voice intelligence to deliver a "Clinical Luxury" consultation experience.
 
 ---
@@ -42,6 +50,16 @@ The Lumière interface is built on a custom design system that prioritizes aesth
 - **HSL Color Tokens**: A curated palette of "Clinical Teals" and "Onyx Shadows" defined via CSS variables.
 - **Cyber Terminal**: A real-time data parsing visualization that provides transparency into the AI's diagnostic reasoning.
 - **Fluid Motion**: Transitions orchestrated via **Framer Motion** to ensure every state change feels premium and intentional.
+
+---
+
+## 🖼️ Visual Walkthrough
+
+| Clinical Interface | Biometric Parsing | Product Recommendations |
+| :---: | :---: | :---: |
+| ![Interface](INFOGRAPHICS/clinical_interface.png) | ![Parsing](INFOGRAPHICS/biometric_parsing.png) | ![Products](INFOGRAPHICS/product_recommendations.png) |
+
+---
 
 ---
 
